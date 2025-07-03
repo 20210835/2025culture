@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문화데이터 확인</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; color: #333; }
+        h1, h2 { color: #0056b3; }
+        .section { background-color: #fff; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        ul { list-style: none; padding: 0; }
+        li { background-color: #e9ecef; margin-bottom: 10px; padding: 10px; border-radius: 4px; }
+        li strong { color: #007bff; }
+    </style>
+</head>
+<body>
+    <h1>Django 데이터 확인 페이지</h1>
+
+    <div class="section">
+        <h2>맛집 데이터 (상위 3개)</h2>
+        {% if restaurants %} {# restaurants 변수에 데이터가 있다면 #}
+            <ul>
+                {% for restaurant in restaurants %} {# 각 맛집 데이터를 반복하여 표시 #}
+                    <li>
+                        <strong>{{ restaurant.Name }}</strong> - 카테고리: {{ restaurant.Category }}<br>
+                        별점: {{ restaurant.Score|default:"N/A" }} / 리뷰 수: {{ restaurant.Review_Num }}<br>
+                        주소: {{ restaurant.Addr }} ({{ restaurant.Area }})<br>
+                        <a href="{{ restaurant.Link }}" target="_blank">상세 링크</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>맛집 데이터가 없습니다.</p> {# 데이터가 없을 경우 #}
+        {% endif %}
+    </div>
+
+    <div class="section">
+        <h2>숙박 데이터 (상위 3개)</h2>
+        {% if hotels %} {# hotels 변수에 데이터가 있다면 #}
+            <ul>
+                {% for hotel in hotels %} {# 각 숙박 데이터를 반복하여 표시 #}
+                    <li>
+                        <strong>{{ hotel.LDGS_NM }}</strong> - 주소: {{ hotel.LDGS_ADDR }}<br>
+                        객실 규모: {{ hotel.GSRM_SCALE_CN }}<br>
+                        평균 점수: {{ hotel.LDGS_AVRG_SCORE_CO|default:"N/A" }}<br>
+                        가격 (평균/최소/최대): {{ hotel.LDGS_AVRG_PRC|default:"N/A" }} / {{ hotel.LDGS_MIN_PRC|default:"N/A" }} / {{ hotel.LDGS_MXMM_PRC|default:"N/A" }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>숙박 데이터가 없습니다.</p> {# 데이터가 없을 경우 #}
+        {% endif %}
+    </div>
+
+</body>
+</html>

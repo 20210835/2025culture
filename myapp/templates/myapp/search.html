@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>검색 페이지</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .search-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+        }
+        .search-button {
+            background-color: #4f46e5;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .search-button:hover {
+            background-color: #4338ca;
+        }
+        .result-item {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .result-item:last-child {
+            margin-bottom: 0;
+        }
+        .result-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        .result-description {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+        .view-map-button {
+            background-color: #22c55e;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+        .view-map-button:hover {
+            background-color: #16a34a;
+        }
+        .no-results {
+            text-align: center;
+            color: #6b7280;
+            padding: 2rem;
+            border: 1px dashed #d1d5db;
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body class="p-4">
+    <div class="container">
+        <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">장소 검색</h1>
+
+        <!-- 검색 폼 -->
+        <form method="get" action="{% url 'myapp:search' %}" class="flex gap-4 mb-8">
+            <input type="text" name="query" placeholder="검색어를 입력하세요..."
+                   class="search-input flex-grow" value="{{ query|default:'' }}">
+            <button type="submit" class="search-button">검색</button>
+        </form>
+
+        <!-- 검색 결과 표시 -->
+        {# search_results 대신 contents 변수를 사용하도록 수정 #}
+        {% if contents %}
+            <h2 class="text-2xl font-semibold mb-4 text-gray-800">검색 결과</h2>
+            <div>
+                {# result in search_results 대신 result in contents로 수정 #}
+                {% for result in contents %}
+                    <div class="result-item">
+                        <div>
+                            <p class="result-title">{{ result.title }}</p>
+                            <p class="result-description">{{ result.place_description|default:"설명 없음" }}</p> {# description 필드가 place_description으로 변경되었을 수 있으므로 확인 #}
+                        </div>
+                        <!-- 지도 페이지로 이동하는 링크. content_id를 쿼리 파라미터로 전달 -->
+                        {# map_view URL 패턴이 content_id 인자를 필요로 하므로, result.id를 직접 전달하도록 수정 #}
+                        <a href="{% url 'myapp:map_view' result.id %}" class="view-map-button">
+                            지도 보기
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% elif query %}
+            <!-- 검색 결과가 없지만 검색어가 입력된 경우 -->
+            <div class="no-results">
+                <p>검색어 '{{ query }}'에 대한 결과가 없습니다.</p>
+            </div>
+        {% else %}
+            <!-- 초기 페이지 로드 시 메시지 -->
+            <div class="no-results">
+                <p>궁금한 장소를 검색해보세요!</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
