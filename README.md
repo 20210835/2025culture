@@ -1,6 +1,7 @@
 1. 아티스트, 드라마, 영화의 장르 검색 구현
 2. 아티스트명 혹은 드라마 제목 등 검색 구현
 3. 지역명 필터링
+
 ![image](https://github.com/user-attachments/assets/243388e1-5864-47aa-ad67-2ebab9c42404)
 
 
