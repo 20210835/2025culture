@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,9 +24,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-!x#&h4v4oh3+=k7b_#p3df%9z8j*pw)ksmxrwp+ij-v+gnxup%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+DEBUG = False
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'myapp',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -48,7 +49,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 ROOT_URLCONF = 'myproject.urls'
 
@@ -78,9 +82,12 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+        'NAME': BASE_DIR / 'db.sqlite3', # <-- 실제 데이터가 있는 DB로 변경
+    },
+    # 나머지 DB는 주석 처리하거나 제거
 }
+
+DATABASE_ROUTERS = []
 
 
 # Password validation
@@ -123,3 +130,13 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# 정적 파일이 위치한 추가 디렉토리 지정 (myapp/static 폴더를 Django가 찾을 수 있도록)
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'), # 프로젝트 루트의 static 폴더도 포함
+    # myapp의 static 폴더가 명시적으로 필요하다면 추가 (대부분은 필요 없음, Django가 자동으로 찾아줌)
+    os.path.join(BASE_DIR, 'myapp', 'static'),
+]
+
+# collectstatic 명령어가 정적 파일을 모을 최종 위치
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # 프로덕션 환경에서 사용
